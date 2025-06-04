@@ -76,7 +76,7 @@ function isActress(dati: unknown): dati is Actress {
   )
 }
 
-async function getActresses(id: number): Promise<Actress | null> {
+async function getActress(id: number): Promise<Actress | null> {
   try {
     const response = await fetch(`http://localhost:3333/actresses/${id}`);
     const dati: unknown = await response.json();
@@ -99,9 +99,11 @@ async function getActresses(id: number): Promise<Actress | null> {
 }
 
 
-getActresses(1).then(actress => {
+getActress(1).then(actress => {
   console.log('✅ Risultato:', actress);
 });
+
+
 
 
 
@@ -126,6 +128,38 @@ async function getAllActresses(): Promise<Actress[]> {
     }
     const validActress: Actress[] = dati.filter(a => isActress(a));
     return validActress;
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error('Errore durante il recupero dei dati attrice', err);
+    } else {
+      console.error('Errore sconosciuto', err);
+
+    }
+    return [];
+  }
+}
+
+
+
+
+
+// 📌 Milestone 5
+// Crea una funzione getActresses che riceve un array di numeri (gli id delle attrici).
+
+// Per ogni id nell’array, usa la funzione getActress che hai creato nella Milestone 3 per recuperare l’attrice corrispondente.
+
+// L'obiettivo è ottenere una lista di risultati in parallelo, quindi dovrai usare Promise.all.
+
+// La funzione deve restituire un array contenente elementi di tipo Actress oppure null (se l’attrice non è stata trovata).
+
+
+async function getActresses(ids: number[]): Promise<(Actress | null)[]> {
+
+
+  try {
+    const promises = ids.map(id => getActress(id));
+    const actresses = await Promise.all(promises);
+    return actresses
   } catch (err) {
     if (err instanceof Error) {
       console.error('Errore durante il recupero dei dati attrice', err);
